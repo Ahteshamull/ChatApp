@@ -1,3 +1,4 @@
+import { getDatabase, ref, set } from "firebase/database";
 import React, { useState } from "react";
 import SignUpImg from "../assets/signup.png";
 import { Link, useNavigate } from "react-router-dom";
@@ -7,10 +8,12 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
   sendEmailVerification,
+  updateProfile,
 } from "firebase/auth";
 import { DNA } from "react-loader-spinner";
 
 const Singup = () => {
+   const db = getDatabase();
   let navigate = useNavigate();
   const auth = getAuth();
   let [email, setEmail] = useState("");
@@ -46,28 +49,35 @@ const Singup = () => {
     }
     if (!password) {
       setPassworderr("*Password is required !");
-    } else if (
-      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+[{\]};:'",/?]).{8,}$/.test(
-        password
-      )
-    ) {
-      setPassworderr(
-        "Password must 8 characters, 1 uppercase, 1 lowercase, 1 number and 1 special character."
-      );
-    }
+    } 
     if (email && name && password) setSuccess(true);
 
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         sendEmailVerification(auth.currentUser).then(() => {
-        
-          setTimeout(() => {
-            setSuccess(false);
-            navigate("/");
-  
-            const user = userCredential.user;
-          }, 2000);
-        });
+
+          updateProfile(auth.currentUser, {
+            displayName: name,
+            photoURL: "null",
+          }).then(() => {
+            set(ref(db, "users/" + userCredential.user.uid), {
+              username: userCredential.user.displayName,
+              email: userCredential.user.email,
+              profile_picture: null,
+            }).then(() => {
+              setTimeout(() => {
+                setSuccess(false);
+                navigate("/");
+
+                const user = userCredential.user;
+              }, 2000);
+            });
+          });
+            })
+            .catch((error) => {
+        console.log(error)
+            });
+       
       })
       .catch((error) => {
         setTimeout(() => {
@@ -190,12 +200,10 @@ const Singup = () => {
                   Sign Up
                 </button>
               </div>
-
-              
             )}
             <p className="text-sm text-secondary text-center w-[368px] mt-[35px]">
               Already have an account ?{" "}
-              <Link to="/" className="text-[#EA6C00] font-bold">
+              <Link to="/login" className="text-[#EA6C00] font-bold">
                 Sign In
               </Link>
             </p>

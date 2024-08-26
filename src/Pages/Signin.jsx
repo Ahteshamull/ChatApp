@@ -43,7 +43,7 @@ const Signin = () => {
   let handleGoogle = () => {
     signInWithPopup(auth, provider)
       .then((result) => {
-        console.log(result);
+        console.log(result.user);
       })
       .catch((error) => {
         console.log(error);
@@ -52,18 +52,26 @@ const Signin = () => {
   let handleFacebook = () => {
     signInWithPopup(auth, faceProvider)
       .then((result) => {
+        // The signed-in user info.
         const user = result.user;
 
+        // This gives you a Facebook Access Token. You can use it to access the Facebook API.
         const credential = FacebookAuthProvider.credentialFromResult(result);
         const accessToken = credential.accessToken;
+
+        // IdP data available using getAdditionalUserInfo(result)
+        // ...
       })
       .catch((error) => {
+        // Handle Errors here.
         const errorCode = error.code;
         const errorMessage = error.message;
-
+        // The email of the user's account used.
         const email = error.customData.email;
-
+        // The AuthCredential type that was used.
         const credential = FacebookAuthProvider.credentialFromError(error);
+
+        // ...
       });
   };
 
@@ -78,13 +86,15 @@ const Signin = () => {
             <div className=" items-center gap-5 flex  mt-5 ml-8">
               <FcGoogle
                 onClick={handleGoogle}
-                lg:size={35} size={30}
+                lg:size={35}
+                size={30}
                 className="cursor-pointer"
               />
               OR
               <FaFacebook
                 onClick={handleFacebook}
-                lg:size={35} size={30}
+                lg:size={35}
+                size={30}
                 className="text-blue-600 cursor-pointer"
               />
             </div>
@@ -157,7 +167,7 @@ const Signin = () => {
             </div>
             <p className="text-sm text-secondary text-center w-[368px] mt-[35px]">
               Don’t have an account ?{" "}
-              <Link to="/singup" className="text-[#EA6C00] font-bold">
+              <Link to="/singin" className="text-[#EA6C00] font-bold">
                 Sign up
               </Link>
             </p>
