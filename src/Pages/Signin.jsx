@@ -10,12 +10,19 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   FacebookAuthProvider,
+  signInWithEmailAndPassword,
 } from "firebase/auth";
+import { useDispatch } from "react-redux";
+import { loginUserInfo } from "../slices/userSlice";
+
+
+
 
 const Signin = () => {
   const provider = new GoogleAuthProvider();
   const faceProvider = new FacebookAuthProvider();
   const auth = getAuth();
+  const dispatch = useDispatch();
   let [email, setEmail] = useState("");
   let [password, setPassword] = useState("");
   let [emailerr, setEmailerr] = useState("");
@@ -39,11 +46,29 @@ const Signin = () => {
     if (!password) {
       setPassworderr("*Password is required !");
     }
+    if (email && password) {
+      let user = {
+        email: email,
+        password: password,
+      }
+      localStorage.setItem("user",JSON.stringify(user));
+      // signInWithEmailAndPassword(auth, email, password)
+      //   .then((userCredential) => {
+      //     const user = userCredential.user;
+      //     dispatch(loginUserInfo(user));
+      //   })
+      //   .catch((error) => {
+      //     const errorCode = error.code;
+      //     if (error.code.includes("auth/Invalid-credential")) {
+      //       setEmailerr("Invalid-credential");
+      //     }
+      //   });
+    }
   };
   let handleGoogle = () => {
     signInWithPopup(auth, provider)
-      .then((result) => {
-        console.log(result.user);
+      .then((user) => {
+        console.log(user);
       })
       .catch((error) => {
         console.log(error);
@@ -52,26 +77,10 @@ const Signin = () => {
   let handleFacebook = () => {
     signInWithPopup(auth, faceProvider)
       .then((result) => {
-        // The signed-in user info.
-        const user = result.user;
-
-        // This gives you a Facebook Access Token. You can use it to access the Facebook API.
-        const credential = FacebookAuthProvider.credentialFromResult(result);
-        const accessToken = credential.accessToken;
-
-        // IdP data available using getAdditionalUserInfo(result)
-        // ...
+        console.log(result);
       })
       .catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.customData.email;
-        // The AuthCredential type that was used.
-        const credential = FacebookAuthProvider.credentialFromError(error);
-
-        // ...
+        console.log(error);
       });
   };
 
@@ -160,7 +169,7 @@ const Signin = () => {
             <div className="text-center">
               <button
                 onClick={handleSubmit}
-                className="bg-primary lg:w-[368px] w-[300px] border border-primary lg:py-5 py-3 text-x font-semibold text-white rounded-[86px] mt-[50px] hover:bg-transparent hover:text-primary cursor-pointer transition-[.4s] hover:border border-primary"
+                className="bg-primary lg:w-[368px] w-[300px] border border-primary lg:py-5 py-3 text-x font-semibold text-white rounded-[86px] mt-[50px] hover:bg-transparent hover:text-primary cursor-pointer transition-[.4s] hover:border hover:border-primary"
               >
                 Login to Continue
               </button>

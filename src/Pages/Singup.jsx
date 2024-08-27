@@ -12,8 +12,9 @@ import {
 } from "firebase/auth";
 import { DNA } from "react-loader-spinner";
 
+
 const Singup = () => {
-   const db = getDatabase();
+  const db = getDatabase();
   let navigate = useNavigate();
   const auth = getAuth();
   let [email, setEmail] = useState("");
@@ -53,25 +54,27 @@ const Singup = () => {
     if (email && name && password) setSuccess(true);
 
     createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        sendEmailVerification(auth.currentUser).then(() => {
-
-          updateProfile(auth.currentUser, {
-            displayName: name,
-            photoURL: "null",
+    .then((userCredential) => {
+      
+      
+      sendEmailVerification(auth.currentUser).then(() => {
+        
+        updateProfile(auth.currentUser, {
+          displayName: name,
+          photoURL: "null",
+        }).then(() => {
+          set(ref(db, "users/" + userCredential.user.uid), {
+            username: userCredential.user.displayName,
+            email: userCredential.user.email,
+            profile_picture: null,
           }).then(() => {
-            set(ref(db, "users/" + userCredential.user.uid), {
-              username: userCredential.user.displayName,
-              email: userCredential.user.email,
-              profile_picture: null,
-            }).then(() => {
-              setTimeout(() => {
-                setSuccess(false);
-                navigate("/");
-
-                const user = userCredential.user;
-              }, 2000);
-            });
+            setTimeout(() => {
+              setSuccess(false);
+              navigate("/login");
+              
+            }, 2000);
+            // const user = userCredential.user;
+          });
           });
             })
             .catch((error) => {
