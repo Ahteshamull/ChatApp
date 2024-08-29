@@ -61,19 +61,18 @@ const Singup = () => {
         
         updateProfile(auth.currentUser, {
           displayName: name,
-          photoURL: "null",
+          photoURL: "/nullimg.jpg",
         }).then(() => {
+          const user = userCredential.user;
           set(ref(db, "users/" + userCredential.user.uid), {
             username: userCredential.user.displayName,
             email: userCredential.user.email,
-            profile_picture: null,
+            profile_picture: "/nullimg.jpg",
           }).then(() => {
             setTimeout(() => {
               setSuccess(false);
               navigate("/login");
-              
-            }, 2000);
-            // const user = userCredential.user;
+            });
           });
           });
             })
@@ -198,7 +197,7 @@ const Singup = () => {
               <div className="text-center lg:text-left">
                 <button
                   onClick={handleSubmit}
-                  className="bg-primary lg:w-[368px] w-[300px] border border-primary lg:py-5 py-3 text-x font-semibold text-white rounded-[86px] mt-[50px] hover:bg-transparent hover:text-primary cursor-pointer transition-[.4s] hover:border border-primary"
+                  className="bg-primary lg:w-[368px] w-[300px] border border-primary lg:py-5 py-3 text-x font-semibold text-white rounded-[86px] mt-[50px] hover:bg-transparent hover:text-primary cursor-pointer transition-[.4s] hover:border hover:border-primary"
                 >
                   Sign Up
                 </button>

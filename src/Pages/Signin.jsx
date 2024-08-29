@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import SigninImg from "../assets/login.jpg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { IoEyeSharp } from "react-icons/io5";
 import { BsEyeSlashFill } from "react-icons/bs";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
+import { getDatabase, ref, set } from "firebase/database";
+
 import {
   getAuth,
   GoogleAuthProvider,
@@ -15,10 +17,9 @@ import {
 import { useDispatch } from "react-redux";
 import { loginUserInfo } from "../slices/userSlice";
 
-
-
-
 const Signin = () => {
+  let navigate = useNavigate();
+  const db = getDatabase();
   const provider = new GoogleAuthProvider();
   const faceProvider = new FacebookAuthProvider();
   const auth = getAuth();
@@ -50,25 +51,39 @@ const Signin = () => {
       let user = {
         email: email,
         password: password,
-      }
-      localStorage.setItem("user",JSON.stringify(user));
-      // signInWithEmailAndPassword(auth, email, password)
-      //   .then((userCredential) => {
-      //     const user = userCredential.user;
-      //     dispatch(loginUserInfo(user));
-      //   })
-      //   .catch((error) => {
-      //     const errorCode = error.code;
-      //     if (error.code.includes("auth/Invalid-credential")) {
-      //       setEmailerr("Invalid-credential");
-      //     }
-      //   });
+        profile_picture: "/nullimg.jpg",
+      };
+      localStorage.setItem("user", JSON.stringify(user));
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          dispatch(loginUserInfo(user));
+          localStorage.setItem("user", JSON.stringify(user));
+          navigate("/")
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          if (error.code.includes("auth/Invalid-credential")) {
+            setEmailerr("Invalid-credential");
+          }
+        });
     }
   };
   let handleGoogle = () => {
     signInWithPopup(auth, provider)
-      .then((user) => {
-        console.log(user);
+      .then((userCredential) => {
+        set(ref(db, "users/" + userCredential.user.uid), {
+          username: userCredential.user.displayName,
+          email: userCredential.user.email,
+          profile_picture: userCredential.user.photoURL,
+          date: `${new Date().getFullYear()}/${
+            new Date().getMonth() + 1
+          }/${new Date().getDate()}--${new Date().getHours()}:${new Date().getMinutes()}`,
+        }).then(() => {
+          setTimeout(() => {
+            navigate("/");
+          });
+        });
       })
       .catch((error) => {
         console.log(error);
@@ -166,6 +181,7 @@ const Signin = () => {
                 </p>
               )}
             </div>
+
             <div className="text-center">
               <button
                 onClick={handleSubmit}
