@@ -68,6 +68,9 @@ const Singup = () => {
             username: userCredential.user.displayName,
             email: userCredential.user.email,
             profile_picture: "/nullimg.jpg",
+            date: `${new Date().getFullYear()}/${
+              new Date().getMonth() + 1
+            }/${new Date().getDate()}--${new Date().getHours()}:${new Date().getMinutes()}`,
           }).then(() => {
             setTimeout(() => {
               setSuccess(false);

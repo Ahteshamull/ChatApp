@@ -4,18 +4,29 @@ import { FcHome, FcSms } from "react-icons/fc";
 import { IoMdNotifications } from "react-icons/io";
 import { IoSettingsSharp } from "react-icons/io5";
 import { ImExit } from "react-icons/im";
+import { useSelector } from "react-redux";
+import { IoMdCloudUpload } from "react-icons/io";
 
 const Sidebar = () => {
+  let data = useSelector((state) => state.userInfo.value);
   return (
     <div className=" h-screen py-8 px-9">
       <div className="w-[186px] h-full bg-primary rounded-[20px] ">
-        <div className="text-center">
-          <img
-            className="w-[100px] h-[100px] rounded-full  mt-[38px] inline-block"
-            src={ProfileImg}
-            alt="ProfileImg"
-          />
+        <div className="text-center pt-9">
+          <div className="w-[100px] h-[100px] group rounded-full mx-auto overflow-hidden relative">
+            <img
+              className=" w-full h-full"
+              src={data.photoURL}
+              alt="ProfileImg"
+            />
+            <div className="w-full h-full cursor-pointer bg-black/50 opacity-0 group-hover:opacity-100 absolute top-0 left-0 flex justify-center items-center">
+              <IoMdCloudUpload size={25} className="text-white " />
+            </div>
+          </div>
         </div>
+        <h2 className="text-[20px] text-white text-center font-Nunito font-bold mt-3">
+          {data.displayName}
+        </h2>
         <div className="w-full h-[89px] relative">
           <div className="w-[161px] relative h-[89px] bg-white ml-auto rounded-l-[20px] mt-[79px] after:w-[10px] after:h-full after:absolute after:top-0 after:right-0 after:bg-primary after:rounded-s-[25px] after:shadow-black after:shadow-black-500"></div>
 
