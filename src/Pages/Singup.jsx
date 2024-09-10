@@ -12,9 +12,8 @@ import {
 } from "firebase/auth";
 import { DNA } from "react-loader-spinner";
 
-
 const Singup = () => {
-  const db = getDatabase();
+
   let navigate = useNavigate();
   const auth = getAuth();
   let [email, setEmail] = useState("");
@@ -50,39 +49,36 @@ const Singup = () => {
     }
     if (!password) {
       setPassworderr("*Password is required !");
-    } 
+    }
     if (email && name && password) setSuccess(true);
 
     createUserWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      
-      
-      sendEmailVerification(auth.currentUser).then(() => {
-        
-        updateProfile(auth.currentUser, {
-          displayName: name,
-          photoURL: "/nullimg.jpg",
-        }).then(() => {
-          const user = userCredential.user;
-          set(ref(db, "users/" + userCredential.user.uid), {
-            username: userCredential.user.displayName,
-            email: userCredential.user.email,
-            profile_picture: "/nullimg.jpg",
-            date: `${new Date().getFullYear()}/${
-              new Date().getMonth() + 1
-            }/${new Date().getDate()}--${new Date().getHours()}:${new Date().getMinutes()}`,
-          }).then(() => {
-            setTimeout(() => {
-              setSuccess(false);
-              navigate("/login");
+      .then((userCredential) => {
+        sendEmailVerification(auth.currentUser)
+          .then(() => {
+            updateProfile(auth.currentUser, {
+              displayName: name,
+              photoURL: "/nullimg.jpg",
+            }).then(() => {
+              const user = userCredential.user;
+              set(ref(db, "users/" + userCredential.user.uid), {
+                username: userCredential.user.displayName,
+                email: userCredential.user.email,
+                image: "/nullimg.jpg",
+                date: `${new Date().getFullYear()}/${
+                  new Date().getMonth() + 1
+                }/${new Date().getDate()}--${new Date().getHours()}:${new Date().getMinutes()}`,
+              }).then(() => {
+                setTimeout(() => {
+                  setSuccess(false);
+                  navigate("/login");
+                });
+              });
             });
+          })
+          .catch((error) => {
+            console.log(error);
           });
-          });
-            })
-            .catch((error) => {
-        console.log(error)
-            });
-       
       })
       .catch((error) => {
         setTimeout(() => {

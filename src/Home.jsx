@@ -40,7 +40,7 @@ const Home = () => {
   return (
     <>
       {verify ? (
-        <section className="py-8 flex w-full  gap-5">
+        <section className="py-8 flex w-full  justify-around">
           <div>
             <GroupList />
             <FriendRequest />

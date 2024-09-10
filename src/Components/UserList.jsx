@@ -1,31 +1,55 @@
 import React, { useEffect, useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import AstImg from "../assets/Ellipse 2.png";
-import { getDatabase, ref, onValue } from "firebase/database";
+import { getDatabase, ref, onValue, set, push } from "firebase/database";
 import moment from "moment";
 import { useSelector } from "react-redux";
 
+
 const UserList = () => {
-   let data = useSelector((state) => state.userInfo.value);
+  let data = useSelector((state) => state.userInfo.value);
   let [UserList, setUserList] = useState([]);
+  let [requestList, setRequestList] = useState(" ");
   const db = getDatabase();
 
   useEffect(() => {
     const UserListRef = ref(db, "users/");
-    onValue(
-      UserListRef,
-      (snapshot) => {
-        let array = [];
-        snapshot.forEach((item) => {
-          if (data.uid != item.key) {
-            
-            array.push(item.val());
-          }
-        });
-        setUserList(array);
-      })
-    },
-      []);
+    onValue(UserListRef, (snapshot) => {
+      let array = [];
+      snapshot.forEach((item) => {
+        if (data.uid != item.key) {
+          array.push({ ...item.val(), uid: item.key });
+        }
+      });
+      setUserList(array);
+    });
+  }, []);
+  useEffect(() => {
+    const friendRequest = ref(db, "friendRequest/");
+    onValue(friendRequest, (snapshot) => {
+      let array = [];
+      snapshot.forEach((item) => {
+      array.push(item.val().senderId + item.val().receiverId)
+      });
+     setRequestList(array)
+    });
+  }, []);
+
+  let handleRequest = (item) => {
+    set(push(ref(db, "friendRequest/")), {
+      senderId: data.uid,
+      senderName: data.displayName,
+      senderEmail: data.email,
+      receiverId: item.uid,
+      receiverName: item.username,
+      receiverEmail: item.email,
+      date: `${new Date().getFullYear()}/${
+        new Date().getMonth() + 1
+      }/${new Date().getDate()}--${new Date().getHours()}:${new Date().getMinutes()}`,
+    }).then(() => {
+      alert("success");
+    });
+  };
 
   return (
     <div>
@@ -55,9 +79,20 @@ const UserList = () => {
                   </p>
                 </div>
               </div>
-              <button className="bg-primary px-2 py-1 text-white font-normal text-[18px] rounded-[5px]">
+              {
+                requestList.includes(data.uid + item.uid) ||
+                requestList.includes(item.uid + data.uid)? (
+                  <button className="bg-blue-500 px-2 py-1 text-white font-normal text-[18px] rounded-[5px]">
+                  p
+                  </button>
+                ) : 
+              <button
+                onClick={() => handleRequest(item)}
+                className="bg-primary px-2 py-1 text-white font-normal text-[18px] rounded-[5px]"
+              >
                 +
               </button>
+              }
             </div>
           ))}
         </div>
