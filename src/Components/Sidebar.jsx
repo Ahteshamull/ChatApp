@@ -17,11 +17,13 @@ import "cropperjs/dist/cropper.css";
 import { getAuth, updateProfile } from "firebase/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUserInfo } from "../slices/userSlice";
-import { update, ref as dref, getDatabase } from "firebase/database";
+import { update, ref as dref, getDatabase} from "firebase/database";
+import { useNavigate } from "react-router-dom";
 
 
 // =====================hj====================//
 const Sidebar = () => {
+  const navigate = useNavigate()
   let db = getDatabase();
   let dispatch = useDispatch();
   const auth = getAuth();
@@ -48,7 +50,7 @@ const Sidebar = () => {
     reader.readAsDataURL(files[0]);
   };
   let handleUpload = () => {
-    const storageRef = ref(storage, "some-child");
+    const storageRef = ref(storage, `UserData/${Date.now()}`);
     if (typeof cropperRef.current?.cropper !== "undefined") {
       setCropData(cropperRef.current?.cropper.getCroppedCanvas().toDataURL());
       const message4 = cropperRef.current?.cropper
@@ -110,8 +112,6 @@ const Sidebar = () => {
           />
         </div>
         <div className="w-full h-[89px] relative mt-[57px]">
-          <div className=" hidden  h-[89px] bg-white ml-auto rounded-l-[20px] mt-[57px] after:w-[10px] after:h-full after:absolute after:top-0 after:right-0 after:bg-primary after:rounded-s-[25px] after:shadow-black after:shadow-black-500"></div>
-
           <FcSms
             size={46}
             className="absolute top-2/4 left-2/4   translate-x-[-50%] translate-y-[-50%] "

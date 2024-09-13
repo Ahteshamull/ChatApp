@@ -9,7 +9,8 @@ import { useSelector } from "react-redux";
 const UserList = () => {
   let data = useSelector((state) => state.userInfo.value);
   let [UserList, setUserList] = useState([]);
-  let [requestList, setRequestList] = useState(" ");
+  let [requestList, setRequestList] = useState([]);
+  let [friendList, setFriendList] = useState([]);
   const db = getDatabase();
 
   useEffect(() => {
@@ -24,6 +25,7 @@ const UserList = () => {
       setUserList(array);
     });
   }, []);
+
   useEffect(() => {
     const friendRequest = ref(db, "friendRequest/");
     onValue(friendRequest, (snapshot) => {
@@ -32,6 +34,16 @@ const UserList = () => {
       array.push(item.val().senderId + item.val().receiverId)
       });
      setRequestList(array)
+    });
+  }, []);
+  useEffect(() => {
+    const friendRequest = ref(db, "friendList/");
+    onValue(friendRequest, (snapshot) => {
+      let array = [];
+      snapshot.forEach((item) => {
+      array.push(item.val().senderId + item.val().receiverId)
+      });
+     setFriendList(array);
     });
   }, []);
 
@@ -66,7 +78,7 @@ const UserList = () => {
               <div className="flex items-center gap-[14px]">
                 <img
                   className="w-[70px] h-[70px] rounded-full"
-                  src={item.profile_picture}
+                  src={item ? item.image : AstImg}
                   alt="AstImg"
                 />
 
@@ -79,20 +91,24 @@ const UserList = () => {
                   </p>
                 </div>
               </div>
-              {
-                requestList.includes(data.uid + item.uid) ||
-                requestList.includes(item.uid + data.uid)? (
-                  <button className="bg-blue-500 px-2 py-1 text-white font-normal text-[18px] rounded-[5px]">
+              {friendList.includes(data.uid + item.uid) ||
+              friendList.includes(item.uid + data.uid) ? (
+                <button className="bg-blue-500 px-2 py-1 text-white font-normal text-[18px] rounded-[5px]">
+                  F
+                </button>
+              ) : requestList.includes(data.uid + item.uid) ||
+                requestList.includes(item.uid + data.uid) ? (
+                <button className="bg-blue-500 px-2 py-1 text-white font-normal text-[18px] rounded-[5px]">
                   p
-                  </button>
-                ) : 
-              <button
-                onClick={() => handleRequest(item)}
-                className="bg-primary px-2 py-1 text-white font-normal text-[18px] rounded-[5px]"
-              >
-                +
-              </button>
-              }
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleRequest(item)}
+                  className="bg-primary px-2 py-1 text-white font-normal text-[18px] rounded-[5px]"
+                >
+                  +
+                </button>
+              )}
             </div>
           ))}
         </div>

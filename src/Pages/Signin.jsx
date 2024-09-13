@@ -7,6 +7,7 @@ import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 import { getDatabase, ref, set } from "firebase/database";
 
+
 import {
   getAuth,
   GoogleAuthProvider,

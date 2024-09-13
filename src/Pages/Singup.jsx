@@ -10,10 +10,11 @@ import {
   sendEmailVerification,
   updateProfile,
 } from "firebase/auth";
+
 import { DNA } from "react-loader-spinner";
 
 const Singup = () => {
-
+ const db = getDatabase()
   let navigate = useNavigate();
   const auth = getAuth();
   let [email, setEmail] = useState("");
