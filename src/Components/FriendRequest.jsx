@@ -54,7 +54,7 @@ const FriendRequest = () => {
               <div className="flex items-center gap-[14px]">
                 <img
                   className="w-[70px] h-[70px] rounded-full"
-                  src={item ? item.profile_picture: AstImg}
+                  src={item ? item.image : AstImg}
                   alt="AstImg"
                 />
 
@@ -71,7 +71,7 @@ const FriendRequest = () => {
                 onClick={() => handleFriend(item)}
                 className="bg-primary px-5 py-1 text-white font-normal text-[18px] rounded-[5px]"
               >
-                A
+                Accept
               </button>
             </div>
           ))}

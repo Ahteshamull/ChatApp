@@ -1,32 +1,59 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import AstImg from "../assets/Ellipse 2.png";
-import { useSelector } from 'react-redux';
-import { getDatabase, onValue, ref } from 'firebase/database';
-import moment from 'moment';
+import { useSelector } from "react-redux";
+import { getDatabase, onValue, push, ref, remove, set } from "firebase/database";
+import moment from "moment";
 
 const FriendList = () => {
+  let data = useSelector((state) => state.userInfo.value);
 
-   let data = useSelector((state) => state.userInfo.value);
-
-   const [friendList, setFriendList] = useState([]);
-   const db = getDatabase();
-    useEffect(() => {
-      const friendRef = ref(db, "friendList/");
-      onValue(friendRef, (snapshot) => {
-        let array = [];
-        snapshot.forEach((item) => {
-          if (
-            data.uid == item.val().senderId ||
-            data.uid == item.val().receiverId
-          ) {
-            array.push({ ...item.val(), key: item.key });
-          }
-        });
-        setFriendList(array);
+  const [friendList, setFriendList] = useState([]);
+  const db = getDatabase();
+  useEffect(() => {
+    const friendRef = ref(db, "friendList/");
+    onValue(friendRef, (snapshot) => {
+      let array = [];
+      snapshot.forEach((item) => {
+        if (
+          data.uid == item.val().senderId ||
+          data.uid == item.val().receiverId
+        ) {
+          array.push({ ...item.val(), key: item.key });
+        }
       });
-    }, []);
-  
+      setFriendList(array);
+    });
+  }, []);
+
+  const handleBlock = (item) => {
+    if (data.uid == item.senderId) {
+      set(push(ref(db, "blocklist/")), {
+        blockById: data.uid,
+        blockBy: data.displayName,
+        blockedUserId: item.receiverId,
+        blockedUser: item.receiverName,
+        date: `${new Date().getFullYear()}/${
+          new Date().getMonth() + 1
+        }/${new Date().getDate()}--${new Date().getHours()}:${new Date().getMinutes()}`,
+      }).then(() => {
+        remove(ref(db, "friendList/" + item.key));
+      });
+    } else {
+      set(push(ref(db, "blocklist/")), {
+        blockById: data.uid,
+        blockBy: data.displayName,
+        blockedUserId: item.senderId,
+        blockedUser: item.senderName,
+        date: `${new Date().getFullYear()}/${
+          new Date().getMonth() + 1
+        }/${new Date().getDate()}--${new Date().getHours()}:${new Date().getMinutes()}`,
+      }).then(() => {
+        remove(ref(db, "friendList/" + item.key));
+      });
+    }
+  };
+
   return (
     <div>
       <div className="w-[344px]  shadow-xl rounded-[20px] px-5 ">
@@ -41,7 +68,7 @@ const FriendList = () => {
                 <img
                   className="w-[70px] h-[70px] rounded-full"
                   src={item ? item.image : AstImg}
-                  alt=""
+                  alt="AstImg"
                 />
 
                 <div>
@@ -55,19 +82,22 @@ const FriendList = () => {
                     </h3>
                   )}
                   <p className="text-[14px] leading-[30px] font-[500] text-gray-500">
-                    Friends
+                    {moment(item.date, "YYYYMMDDhh:mm").fromNow()}
                   </p>
                 </div>
               </div>
-              <h4 className="text-[10px] font-normal leading-4 text-black/50">
-                {moment(item.date, "YYYYMMDDhh:mm").fromNow()}
-              </h4>
+              <button
+                onClick={() => handleBlock(item)}
+                className="bg-primary px-5 py-1 text-white font-normal text-[18px] rounded-[5px]"
+              >
+                Block
+              </button>
             </div>
           ))}
         </div>
       </div>
     </div>
   );
-}
+};
 
-export default FriendList
+export default FriendList;

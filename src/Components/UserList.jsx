@@ -4,14 +4,17 @@ import AstImg from "../assets/Ellipse 2.png";
 import { getDatabase, ref, onValue, set, push } from "firebase/database";
 import moment from "moment";
 import { useSelector } from "react-redux";
-
+import { toast, ToastContainer } from "react-toastify";
 
 const UserList = () => {
   let data = useSelector((state) => state.userInfo.value);
   let [UserList, setUserList] = useState([]);
   let [requestList, setRequestList] = useState([]);
   let [friendList, setFriendList] = useState([]);
+  let [blockList, setBlockList] = useState([]);
   const db = getDatabase();
+
+  
 
   useEffect(() => {
     const UserListRef = ref(db, "users/");
@@ -31,9 +34,9 @@ const UserList = () => {
     onValue(friendRequest, (snapshot) => {
       let array = [];
       snapshot.forEach((item) => {
-      array.push(item.val().senderId + item.val().receiverId)
+        array.push(item.val().senderId + item.val().receiverId);
       });
-     setRequestList(array)
+      setRequestList(array);
     });
   }, []);
   useEffect(() => {
@@ -41,9 +44,21 @@ const UserList = () => {
     onValue(friendRequest, (snapshot) => {
       let array = [];
       snapshot.forEach((item) => {
-      array.push(item.val().senderId + item.val().receiverId)
+        array.push(item.val().senderId + item.val().receiverId);
       });
-     setFriendList(array);
+      setFriendList(array);
+    });
+  }, []);
+
+  useEffect(() => {
+    const blockList = ref(db, "blockList/");
+    onValue(blockList, (snapshot) => {
+      let array = [];
+      snapshot.forEach((item) => {
+console.log(item)
+        // array.push(item.val().blockById + item.val().blockedUserId);
+      });
+      setBlockList(array);
     });
   }, []);
 
@@ -58,9 +73,7 @@ const UserList = () => {
       date: `${new Date().getFullYear()}/${
         new Date().getMonth() + 1
       }/${new Date().getDate()}--${new Date().getHours()}:${new Date().getMinutes()}`,
-    }).then(() => {
-      alert("success");
-    });
+    }).then(alert("Friend request Send"));
   };
 
   return (
@@ -91,22 +104,27 @@ const UserList = () => {
                   </p>
                 </div>
               </div>
-              {friendList.includes(data.uid + item.uid) ||
-              friendList.includes(item.uid + data.uid) ? (
+              {blockList.includes(data.uid + item.uid) ||
+              blockList.includes(item.uid + data.uid) ? (
                 <button className="bg-blue-500 px-2 py-1 text-white font-normal text-[18px] rounded-[5px]">
-                  F
+                  Blocked
+                </button>
+              ) : friendList.includes(data.uid + item.uid) ||
+                friendList.includes(item.uid + data.uid) ? (
+                <button className="bg-blue-500 px-2 py-1 text-white font-normal text-[18px] rounded-[5px]">
+                  Friends
                 </button>
               ) : requestList.includes(data.uid + item.uid) ||
                 requestList.includes(item.uid + data.uid) ? (
                 <button className="bg-blue-500 px-2 py-1 text-white font-normal text-[18px] rounded-[5px]">
-                  p
+                  Pending
                 </button>
               ) : (
                 <button
                   onClick={() => handleRequest(item)}
                   className="bg-primary px-2 py-1 text-white font-normal text-[18px] rounded-[5px]"
                 >
-                  +
+                  Add F
                 </button>
               )}
             </div>
