@@ -11,7 +11,7 @@ const UserList = () => {
   let [UserList, setUserList] = useState([]);
   let [requestList, setRequestList] = useState([]);
   let [friendList, setFriendList] = useState([]);
-  let [blockList, setBlockList] = useState([]);
+  let [blocklist, setBlockList] = useState([]);
   const db = getDatabase();
 
   
@@ -51,12 +51,11 @@ const UserList = () => {
   }, []);
 
   useEffect(() => {
-    const blockList = ref(db, "blockList/");
+    const blockList = ref(db, "blocklist/");
     onValue(blockList, (snapshot) => {
       let array = [];
       snapshot.forEach((item) => {
-console.log(item)
-        // array.push(item.val().blockById + item.val().blockedUserId);
+        array.push(item.val().blockById + item.val().blockedUserId);
       });
       setBlockList(array);
     });
@@ -104,19 +103,19 @@ console.log(item)
                   </p>
                 </div>
               </div>
-              {blockList.includes(data.uid + item.uid) ||
-              blockList.includes(item.uid + data.uid) ? (
-                <button className="bg-blue-500 px-2 py-1 text-white font-normal text-[18px] rounded-[5px]">
-                  Blocked
+              {blocklist.includes(data.uid + item.uid) ||
+              blocklist.includes(item.uid + data.uid) ? (
+                <button className="bg-primary px-2 py-1 text-white font-normal text-[18px] rounded-[5px]">
+                 Blocked
                 </button>
               ) : friendList.includes(data.uid + item.uid) ||
                 friendList.includes(item.uid + data.uid) ? (
-                <button className="bg-blue-500 px-2 py-1 text-white font-normal text-[18px] rounded-[5px]">
+                <button className="bg-primary px-2 py-1 text-white font-normal text-[18px] rounded-[5px]">
                   Friends
                 </button>
               ) : requestList.includes(data.uid + item.uid) ||
                 requestList.includes(item.uid + data.uid) ? (
-                <button className="bg-blue-500 px-2 py-1 text-white font-normal text-[18px] rounded-[5px]">
+                <button className="bg-primary px-2 py-1 text-white font-normal text-[18px] rounded-[5px]">
                   Pending
                 </button>
               ) : (

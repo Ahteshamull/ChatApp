@@ -17,13 +17,12 @@ import "cropperjs/dist/cropper.css";
 import { getAuth, updateProfile } from "firebase/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUserInfo } from "../slices/userSlice";
-import { update, ref as dref, getDatabase} from "firebase/database";
+import { update, ref as dref, getDatabase } from "firebase/database";
 import { useNavigate } from "react-router-dom";
-
 
 // =====================hj====================//
 const Sidebar = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   let db = getDatabase();
   let dispatch = useDispatch();
   const auth = getAuth();
@@ -36,6 +35,8 @@ const Sidebar = () => {
   const storage = getStorage();
 
   let data = useSelector((state) => state.userInfo.value);
+  let [handleNavigate, setHandleNavigate] = useState(null);
+  let naviGate = useNavigate();
   let handleImgFile = (e) => {
     let files;
     if (e.dataTransfer) {
@@ -81,7 +82,18 @@ const Sidebar = () => {
       });
     }
   };
+  // let handleNavigate = () => {
 
+  // }
+  if (handleNavigate === "Massage") {
+    naviGate("/massage");
+  } else if (handleNavigate === "Home") {
+    naviGate("/");
+  } else if (handleNavigate === "Notification") {
+    naviGate("/notification");
+  } else if (handleNavigate === "Setting") {
+    naviGate("/setting");
+  }
   return (
     <div className=" h-screen py-8 px-9">
       <div className="w-[186px] h-full bg-primary rounded-[20px] ">
@@ -103,8 +115,15 @@ const Sidebar = () => {
         <h2 className="text-[20px] text-white text-center font-Nunito font-bold mt-3">
           {data && data.displayName}
         </h2>
-        <div className="w-full h-[89px] relative">
-          <div className="w-[161px] relative h-[89px] bg-white ml-auto rounded-l-[20px] mt-[79px] after:w-[10px] after:h-full after:absolute after:top-0 after:right-0 after:bg-primary after:rounded-s-[25px] after:shadow-black after:shadow-black-500"></div>
+        <div
+          className={`w-full h-[89px] relative after:w-[10px] after:h-full after:absolute after:top-0 after:right-0 after:bg-primary after:rounded-s-[25px] after:shadow-black after:shadow-black-500 `}
+          onClick={() => setHandleNavigate("Home")}
+        >
+          <div
+            className={`w-[161px] relative h-[89px] ${
+              handleNavigate === "Home" ? "block" : "hidden"
+            } bg-white ml-auto rounded-l-[20px] mt-[79px] `}
+          ></div>
 
           <FcHome
             size={46}
@@ -113,14 +132,20 @@ const Sidebar = () => {
         </div>
         <div className="w-full h-[89px] relative mt-[57px]">
           <FcSms
+            onClick={() => setHandleNavigate("Massage")}
             size={46}
             className="absolute top-2/4 left-2/4   translate-x-[-50%] translate-y-[-50%] "
           />
         </div>
         <div className="w-full h-[89px] relative mt-[57px]">
-          <div className="hidden w-[161px] h-[89px] bg-white ml-auto rounded-l-[20px]  after:w-[10px] after:h-full after:absolute after:top-0 after:right-0 after:bg-primary after:rounded-s-[25px] after:shadow-black after:shadow-black-500"></div>
+          <div
+            className={`hidden w-[161px] h-[89px] ${
+              setHandleNavigate === "Notification" ? "block" : "hidden "
+            } bg-white ml-auto rounded-l-[20px]  after:w-[10px] after:h-full after:absolute after:top-0 after:right-0 after:bg-primary after:rounded-s-[25px] after:shadow-black after:shadow-black-500`}
+          ></div>
 
           <IoMdNotifications
+            onClick={() => setHandleNavigate("Notification")}
             size={46}
             className="absolute top-2/4 left-2/4   translate-x-[-50%] translate-y-[-50%] text-[#BAD1FF]"
           />
@@ -129,6 +154,7 @@ const Sidebar = () => {
           <div className="hidden w-[161px] h-[89px] bg-white ml-auto rounded-l-[20px]  after:w-[10px] after:h-full after:absolute after:top-0 after:right-0 after:bg-primary after:rounded-s-[25px] after:shadow-black after:shadow-black-500"></div>
 
           <IoSettingsSharp
+            onClick={() => setHandleNavigate("Setting")}
             size={46}
             className="absolute top-2/4 left-2/4   translate-x-[-50%] translate-y-[-50%] text-[#BAD1FF]"
           />

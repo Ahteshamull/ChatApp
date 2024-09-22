@@ -29,8 +29,8 @@ const FriendList = () => {
   const handleBlock = (item) => {
     if (data.uid == item.senderId) {
       set(push(ref(db, "blocklist/")), {
-        blockById: data.uid,
-        blockBy: data.displayName,
+        blockById: item.senderId,
+        blockBy: item.senderName,
         blockedUserId: item.receiverId,
         blockedUser: item.receiverName,
         date: `${new Date().getFullYear()}/${
@@ -41,8 +41,8 @@ const FriendList = () => {
       });
     } else {
       set(push(ref(db, "blocklist/")), {
-        blockById: data.uid,
-        blockBy: data.displayName,
+        blockById: item.receiverId,
+        blockBy: item.receiverName,
         blockedUserId: item.senderId,
         blockedUser: item.senderName,
         date: `${new Date().getFullYear()}/${
