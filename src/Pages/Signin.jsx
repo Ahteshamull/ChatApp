@@ -7,7 +7,6 @@ import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 import { getDatabase, ref, set } from "firebase/database";
 
-
 import {
   getAuth,
   GoogleAuthProvider,
@@ -17,6 +16,9 @@ import {
 } from "firebase/auth";
 import { useDispatch } from "react-redux";
 import { loginUserInfo } from "../slices/userSlice";
+import { Bounce, ToastContainer, toast } from "react-toastify";
+
+import "react-toastify/dist/ReactToastify.css";
 
 const Signin = () => {
   let navigate = useNavigate();
@@ -60,7 +62,19 @@ const Signin = () => {
           const user = userCredential.user;
           dispatch(loginUserInfo(user));
           localStorage.setItem("user", JSON.stringify(user));
-          navigate("/")
+          navigate("/").then(() => {
+            toast.success("login Success!", {
+              position: "top-right",
+              autoClose: 2000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              transition: Bounce,
+            });
+          });
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -83,6 +97,18 @@ const Signin = () => {
         }).then(() => {
           setTimeout(() => {
             navigate("/");
+          }).then(() => {
+            toast.success("Login Success!", {
+              position: "top-right",
+              autoClose: 2000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              transition: Bounce,
+            });
           });
         });
       })
@@ -104,6 +130,21 @@ const Signin = () => {
     <>
       <div className="w-full h-screen lg:flex ">
         <div className="lg:w-2/4 h-full flex justify-end items-center ">
+          <ToastContainer
+            position="top-right"
+            autoClose={2000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+            transition={Bounce}
+          />
+          {/* Same as */}
+          <ToastContainer />
           <div className="lg:mr-[69px]">
             <h1 className="lg:text-[34px] lg:font-[700] font-[500] text-[29px] text-center text-secondary leading-[45px]">
               Login to your account!

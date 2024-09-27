@@ -11,6 +11,9 @@ import {
   updateProfile,
 } from "firebase/auth";
 
+ import { Bounce, ToastContainer, toast } from "react-toastify";
+
+ import "react-toastify/dist/ReactToastify.css";
 import { DNA } from "react-loader-spinner";
 
 const Singup = () => {
@@ -51,49 +54,83 @@ const Singup = () => {
     if (!password) {
       setPassworderr("*Password is required !");
     }
-    if (email && name && password) setSuccess(true);
-
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        sendEmailVerification(auth.currentUser)
-          .then(() => {
-            updateProfile(auth.currentUser, {
-              displayName: name,
-              photoURL: "/nullimg.jpg",
-            }).then(() => {
-              const user = userCredential.user;
-              set(ref(db, "users/" + userCredential.user.uid), {
-                username: userCredential.user.displayName,
-                email: userCredential.user.email,
-                image: "/nullimg.jpg",
-                date: `${new Date().getFullYear()}/${
-                  new Date().getMonth() + 1
-                }/${new Date().getDate()}--${new Date().getHours()}:${new Date().getMinutes()}`,
+    if (email && name && password) {
+      setSuccess(true)
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          sendEmailVerification(auth.currentUser)
+            .then(() => {
+              updateProfile(auth.currentUser, {
+                displayName: name,
+                photoURL: "/nullimg.jpg",
               }).then(() => {
-                setTimeout(() => {
-                  setSuccess(false);
-                  navigate("/login");
-                });
+                const user = userCredential.user;
+                set(ref(db, "users/" + userCredential.user.uid), {
+                  username: userCredential.user.displayName,
+                  email: userCredential.user.email,
+                  image: "/nullimg.jpg",
+                  date: `${new Date().getFullYear()}/${
+                    new Date().getMonth() + 1
+                  }/${new Date().getDate()}--${new Date().getHours()}:${new Date().getMinutes()}`,
+                })
+                  .then(() => {
+                    toast.success("User Create Success!", {
+                      position: "top-right",
+                      autoClose: 2000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      progress: undefined,
+                      theme: "light",
+                      transition: Bounce,
+                    });
+                  })
+                  .then(() => {
+                    setTimeout(() => {
+                      setSuccess(false);
+                      navigate("/login");
+                    });
+                  });
               });
+            })
+            .catch((error) => {
+              console.log(error);
             });
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      })
-      .catch((error) => {
-        setTimeout(() => {
-          setSuccess(false);
-          const errorCode = error.code;
-          const errorMessage = error.message;
-        }, 2000);
-      });
+        })
+        .catch((error) => {
+          setTimeout(() => {
+            setSuccess(false);
+            const errorCode = error.code;
+            const errorMessage = error.message;
+          }, 2000);
+        });
+
+    }
+      
+    
+
   };
 
   return (
     <>
       <div className="w-full h-screen flex">
         <div className="lg:w-2/4 h-full flex justify-end items-center">
+          <ToastContainer
+            position="top-right"
+            autoClose={2000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+            transition={Bounce}
+          />
+          {/* Same as */}
+          <ToastContainer />
           <div className="lg:mr-[69px]">
             <h1 className="lg:text-[34px] text-[25px] lg:font-[700] font-[500] text-secondary leading-[45px]">
               Get started with easily register !

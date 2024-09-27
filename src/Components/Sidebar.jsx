@@ -1,4 +1,4 @@
-import React, { createRef, useState } from "react";
+import React, { createRef, useEffect, useState } from "react";
 import ProfileImg from "../assets/profile.png";
 import { FcHome, FcSms } from "react-icons/fc";
 import { IoMdNotifications } from "react-icons/io";
@@ -35,7 +35,7 @@ const Sidebar = () => {
   const storage = getStorage();
 
   let data = useSelector((state) => state.userInfo.value);
-  let [handleNavigate, setHandleNavigate] = useState(null);
+  let [handleNavigate, setHandleNavigate] = useState("Home");
   let naviGate = useNavigate();
   let handleImgFile = (e) => {
     let files;
@@ -82,18 +82,17 @@ const Sidebar = () => {
       });
     }
   };
-  // let handleNavigate = () => {
-
-  // }
-  if (handleNavigate === "Massage") {
-    naviGate("/massage");
-  } else if (handleNavigate === "Home") {
-    naviGate("/");
-  } else if (handleNavigate === "Notification") {
-    naviGate("/notification");
-  } else if (handleNavigate === "Setting") {
-    naviGate("/setting");
-  }
+  useEffect(() => {
+    if (handleNavigate === "Massage") {
+      naviGate("/massage");
+    } else if (handleNavigate === "Home") {
+      naviGate("/");
+    } else if (handleNavigate === "Notification") {
+      naviGate("/notification");
+    } else if (handleNavigate === "Setting") {
+      naviGate("/setting");
+    }
+  }, [naviGate, handleNavigate]);
   return (
     <div className=" h-screen py-8 px-9">
       <div className="w-[186px] h-full bg-primary rounded-[20px] ">
@@ -116,13 +115,13 @@ const Sidebar = () => {
           {data && data.displayName}
         </h2>
         <div
-          className={`w-full h-[89px] relative after:w-[10px] after:h-full after:absolute after:top-0 after:right-0 after:bg-primary after:rounded-s-[25px] after:shadow-black after:shadow-black-500 `}
+          className={`w-full h-[89px] relative mt-12 after:w-[10px] after:h-full after:absolute after:top-0 after:right-0 after:bg-primary after:rounded-s-[25px] after:shadow-black after:shadow-black-500 `}
           onClick={() => setHandleNavigate("Home")}
         >
           <div
-            className={`w-[161px] relative h-[89px] ${
+            className={`w-[161px]  h-[89px] ${
               handleNavigate === "Home" ? "block" : "hidden"
-            } bg-white ml-auto rounded-l-[20px] mt-[79px] `}
+            } bg-white ml-auto rounded-l-[20px]  `}
           ></div>
 
           <FcHome
@@ -130,33 +129,49 @@ const Sidebar = () => {
             className="absolute top-2/4 left-2/4   translate-x-[-50%] translate-y-[-50%]"
           />
         </div>
-        <div className="w-full h-[89px] relative mt-[57px]">
+        <div
+          onClick={() => setHandleNavigate("Massage")}
+          className="w-full h-[89px] relative mt-[57px] after:w-[10px] after:h-full after:absolute after:top-0 after:right-0 after:bg-primary after:rounded-s-[25px] after:shadow-black after:shadow-black-500"
+        >
+          <div
+            className={`w-[161px]  h-[89px] ${
+              handleNavigate === "Massage" ? "block" : "hidden"
+            } bg-white ml-auto rounded-l-[20px]  `}
+          ></div>
+
           <FcSms
-            onClick={() => setHandleNavigate("Massage")}
             size={46}
             className="absolute top-2/4 left-2/4   translate-x-[-50%] translate-y-[-50%] "
           />
         </div>
-        <div className="w-full h-[89px] relative mt-[57px]">
+        <div
+          onClick={() => setHandleNavigate("Notification")}
+          className="w-full h-[89px] relative mt-[57px] after:w-[10px] after:h-full after:absolute after:top-0 after:right-0 after:bg-primary after:rounded-s-[25px] after:shadow-black after:shadow-black-500"
+        >
           <div
-            className={`hidden w-[161px] h-[89px] ${
-              setHandleNavigate === "Notification" ? "block" : "hidden "
-            } bg-white ml-auto rounded-l-[20px]  after:w-[10px] after:h-full after:absolute after:top-0 after:right-0 after:bg-primary after:rounded-s-[25px] after:shadow-black after:shadow-black-500`}
+            className={`w-[161px]  h-[89px] ${
+              handleNavigate === "Notification" ? "block" : "hidden"
+            } bg-white ml-auto rounded-l-[20px]  `}
           ></div>
 
           <IoMdNotifications
-            onClick={() => setHandleNavigate("Notification")}
             size={46}
-            className="absolute top-2/4 left-2/4   translate-x-[-50%] translate-y-[-50%] text-[#BAD1FF]"
+            className="absolute top-2/4 left-2/4  text-red-600 translate-x-[-50%] translate-y-[-50%] "
           />
         </div>
-        <div className=" w-full h-[89px] relative mt-[57px]">
-          <div className="hidden w-[161px] h-[89px] bg-white ml-auto rounded-l-[20px]  after:w-[10px] after:h-full after:absolute after:top-0 after:right-0 after:bg-primary after:rounded-s-[25px] after:shadow-black after:shadow-black-500"></div>
+        <div
+          onClick={() => setHandleNavigate("Setting")}
+          className="w-full h-[89px] relative mt-[57px] after:w-[10px] after:h-full after:absolute after:top-0 after:right-0 after:bg-primary after:rounded-s-[25px] after:shadow-black after:shadow-black-500"
+        >
+          <div
+            className={`w-[161px]  h-[89px] ${
+              handleNavigate === "Setting" ? "block" : "hidden"
+            } bg-white ml-auto rounded-l-[20px]  `}
+          ></div>
 
           <IoSettingsSharp
-            onClick={() => setHandleNavigate("Setting")}
             size={46}
-            className="absolute top-2/4 left-2/4   translate-x-[-50%] translate-y-[-50%] text-[#BAD1FF]"
+            className="absolute top-2/4 left-2/4  text-black  translate-x-[-50%] translate-y-[-50%] "
           />
         </div>
         <div className="w-full h-[89px] relative">

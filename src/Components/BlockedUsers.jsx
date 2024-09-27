@@ -12,6 +12,9 @@ import {
   set,
 } from "firebase/database";
 import moment from "moment";
+import { Bounce, ToastContainer, toast } from "react-toastify";
+ 
+ import "react-toastify/dist/ReactToastify.css";
 
 
 const BlockedUsers = () => {
@@ -63,7 +66,21 @@ const BlockedUsers = () => {
         new Date().getMonth() + 1
       }/${new Date().getDate()}--${new Date().getHours()}:${new Date().getMinutes()}`,
     }).then(() => {
-      remove(ref(db, "blocklist/" + item.key));
+      remove(ref(db, "blocklist/" + item.key))
+        .then(() => {
+          toast.success("😉Unblocked", {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            transition: Bounce,
+          });
+        
+      })
     });
   };
 
@@ -71,6 +88,21 @@ const BlockedUsers = () => {
 
   return (
     <div className="w-[344px]  shadow-xl rounded-[20px] px-5 mt-[43px]">
+      <ToastContainer
+position="top-right"
+autoClose={5000}
+hideProgressBar={false}
+newestOnTop={false}
+closeOnClick
+rtl={false}
+pauseOnFocusLoss
+draggable
+pauseOnHover
+theme="light"
+transition= {Bounce}
+/>
+
+<ToastContainer />
       <div className="flex justify-between items-center ">
         <h2 className="text-[20px] leading-[30px] font-semibold ">
           Blocked Users

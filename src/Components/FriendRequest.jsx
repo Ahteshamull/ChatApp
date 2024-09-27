@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import AstImg from "../assets/Ellipse 2.png";
+import { Bounce, ToastContainer, toast } from "react-toastify";
+
+import "react-toastify/dist/ReactToastify.css";
 import {
   getDatabase,
   onValue,
@@ -24,24 +27,70 @@ const FriendRequest = () => {
       let array = [];
       snapshot.forEach((item) => {
         if (data.uid == item.val().receiverId) {
-          array.push({ ...item.val(), key:item.key });
+          array.push({ ...item.val(), key: item.key });
         }
       });
       setFriendRequestList(array);
     });
   }, []);
   let handleFriend = (item) => {
- 
     set(push(ref(db, "friendList/")), {
       ...item,
-    }).then(() => {
-      remove(ref(db, "friendRequest/" + item.key));
-    });
+    })
+      .then(() => {
+        remove(ref(db, "friendRequest/" + item.key))
+        .then(() => {
+            toast.success("🤏Accepted!", {
+              position: "top-right",
+              autoClose: 2000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              transition: Bounce,
+          });
+        })
+      })
   };
+
+  // let handleDelete = (item) => {
+  //    if (data.uid == item.re) {
+  //   set(ref(db, "users/" + item.key), {
+  //     senderId: data.uid,
+  //     senderName: data.displayName,
+
+  //     receiverId: item.blockedUserId,
+  //     receiverName: item.blockedUser,
+
+  //     date: `${new Date().getFullYear()}/${
+  //       new Date().getMonth() + 1
+  //     }/${new Date().getDate()}--${new Date().getHours()}:${new Date().getMinutes()}`,
+  //   }).then(() => {
+  //     remove(ref(db, "friendRequest/" + item.key));
+  //   });
+  //    } 
+  // }
 
   return (
     <div>
       <div className="w-[427px]  shadow-xl rounded-[20px] px-5  mt-[45px]">
+        <ToastContainer
+          position="top-right"
+          autoClose={2000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+          transition={Bounce}
+        />
+        {/* Same as */}
+        <ToastContainer />
         <div className="flex justify-between items-center ">
           <h2 className="text-[20px] leading-[30px] font-semibold ">
             Friends Request
@@ -73,6 +122,12 @@ const FriendRequest = () => {
               >
                 Accept
               </button>
+              {/* <button
+                onClick={() => handleDelete(item)}
+                className="bg-primary px-5 py-1 text-white font-normal text-[18px] rounded-[5px]"
+              >
+                Delete
+              </button> */}
             </div>
           ))}
         </div>
