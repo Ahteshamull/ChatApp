@@ -91,19 +91,15 @@ const UserList = () => {
 
   let handleSearch = (e) => {
     let search = userList.filter((item) =>
-
-     
       item.username.toLowerCase().includes(e.target.value.toLowerCase())
     );
 
     setSearchList(search);
   };
 
-
-
   return (
     <div>
-      <div className="relative w-[344px] h-[59px] shadow-xl rounded-[20px]">
+      <div className="relative w-[344px] z-[-1] h-[59px] shadow-xl rounded-[20px]">
         <input
           onChange={handleSearch}
           className=" w-full h-full pl-[78px] items-center  rounded-[20px]"
